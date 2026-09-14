@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: ar.edu.utn.frc.backend.Ejercicio4EliminarConIteratorTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in ar.edu.utn.frc.backend.Ejercicio4EliminarConIteratorTest
