@@ -86,3 +86,12 @@ while read n; do
   done
 done < numeros.txt
 
+
+
+
+
+T="01dfa5c0d2375d6bdf7f8cec5e83791a\|3e76e3be0d158f056fa236dfb28aa727"
+while read n; do
+  printf "%s" "$n" | md5sum | grep -q "$T" && echo "SIN-nl: $n"
+  echo "$n" | md5sum | grep -q "$T" && echo "CON-nl: $n"
+done < numeros.txt
