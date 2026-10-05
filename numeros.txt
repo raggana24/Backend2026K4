@@ -95,3 +95,10 @@ while read n; do
   printf "%s" "$n" | md5sum | grep -q "$T" && echo "SIN-nl: $n"
   echo "$n" | md5sum | grep -q "$T" && echo "CON-nl: $n"
 done < numeros.txt
+
+
+
+printf "%s" "0e1422ea79781ee046484893ce0010c4" | md5sum
+printf "%s" "0602940f23884f782058efac46f64b0f" | md5sum
+echo "0e1422ea79781ee046484893ce0010c4" | md5sum
+echo "0602940f23884f782058efac46f64b0f" | md5sum
