@@ -107,3 +107,6 @@ echo "0602940f23884f782058efac46f64b0f" | md5sum
 
 printf "%s" "01dfa5c0d2375d6bdf7f8cec5e83791a" | md5sum
 echo "01dfa5c0d2375d6bdf7f8cec5e83791a" | md5sum
+
+
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/" | head -50
