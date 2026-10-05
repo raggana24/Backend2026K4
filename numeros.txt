@@ -76,3 +76,13 @@ done < numeros.txt
 
 curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0602940f23884f782058efac46f64b0f/" -o archivo1.html
 cat archivo1.html
+
+
+T="0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f"
+while read n; do
+  for v in "$n" "0$n" "00$n" "000$n" "$(printf '%09d' $n)" "$(printf '%010d' $n)" "$(printf '%016d' $n)"; do
+    printf "%s" "$v" | md5sum | grep -q "$T" && echo "SIN-nl variante='$v' (de $n)"
+    echo "$v" | md5sum | grep -q "$T" && echo "CON-nl variante='$v' (de $n)"
+  done
+done < numeros.txt
+
