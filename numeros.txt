@@ -48,3 +48,17 @@
 250017202
 810674213
 855910825
+
+
+
+
+
+
+#!/bin/bash
+BASE="http://EL_SITIO/la_carpeta"   # <-- completá con la URL real
+
+while read n; do
+  h=$(printf "%s" "$n" | md5sum | cut -d' ' -f1)
+  code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/$h.html")
+  echo "$n -> $h -> $code"
+done < numeros.txt
