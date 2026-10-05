@@ -70,3 +70,9 @@ while read n; do
   printf "%s" "$n" | md5sum | grep -q "0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f" && echo "SIN newline: $n"
   echo "$n" | md5sum | grep -q "0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f" && echo "CON newline: $n"
 done < numeros.txt
+
+
+
+
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0602940f23884f782058efac46f64b0f/" -o archivo1.html
+cat archivo1.html
