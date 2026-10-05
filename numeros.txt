@@ -62,3 +62,11 @@ while read n; do
   code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/$h.html")
   echo "$n -> $h -> $code"
 done < numeros.txt
+
+
+
+
+while read n; do
+  printf "%s" "$n" | md5sum | grep -q "0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f" && echo "SIN newline: $n"
+  echo "$n" | md5sum | grep -q "0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f" && echo "CON newline: $n"
+done < numeros.txt
