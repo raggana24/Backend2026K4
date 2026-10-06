@@ -23,3 +23,130 @@ while read n; do
   code=$(curl -s -L -o /dev/null -w "%{http_code}" "$BASE/$h/")
   echo "$cand -> $code"
 done < numeros.txt | grep -v 404
+
+
+
+
+
+
+
+#!/usr/bin/env python3
+"""
+reverse_rule.py - descubrir la regla de nombres del reto "Apagar la IA".
+
+Idea central: en vez de adivinar el 3er archivo a ciegas, REPRODUCI los dos
+que ya conoces. Si existe f tal que:
+
+    md5(f(datos_A)) == HASH_A   Y   md5(f(datos_B)) == HASH_B
+
+entonces conoces la regla y el 3ro sale aplicando la misma f.
+Si NINGUNA transformacion imprime [MATCH], es prueba de que el nombre NO
+se deriva de los numeros -> el camino es headers/contenido/hint, no aritmetica.
+"""
+import hashlib
+
+# ============== PEGA TUS DATOS REALES ACA ==============
+HASH_A = "0e1422xxxxxxxxxxxxxxxxxxxxxxxxxxc4"   # nombre COMPLETO del archivo A (32 hex)
+HASH_B = "0602940fxxxxxxxxxxxxxxxxxxxxxxxb0f"   # nombre COMPLETO del archivo B (32 hex)
+
+# Los numeros de cada archivo, como strings, EN EL ORDEN en que aparecen.
+NUMS_A = [
+    # "12345678", "123456789", ...
+]
+NUMS_B = [
+    # "87654321", "987654321", ...
+]
+
+# Opcional: contenido crudo si lo guardaste con  curl -s ... > a.html
+# RAW_A = open("a.html", "rb").read()
+RAW_A = None
+RAW_B = None
+# =======================================================
+
+
+def md5(x):
+    if isinstance(x, str):
+        x = x.encode()
+    return hashlib.md5(x).hexdigest()
+
+
+KNOWN = {HASH_A.lower(): "A", HASH_B.lower(): "B"}
+_hits = []
+
+
+def check(label, value):
+    if md5(value) in KNOWN:
+        who = KNOWN[md5(value)]
+        print(f"  [MATCH {who}]  regla = {label}")
+        print(f"              input = {value!r}")
+        _hits.append((who, label))
+
+
+def probar_archivo(nums, raw, tag):
+    if not nums:
+        return
+    # --- el nombre podria ser md5 del archivo entero ---
+    variantes = {
+        "join_asis":        "".join(nums),
+        "join_nl":          "\n".join(nums),
+        "join_nl_trailing": "\n".join(nums) + "\n",
+        "join_coma":        ",".join(nums),
+        "join_espacio":     " ".join(nums),
+        "join_ordenado":    "".join(sorted(nums)),
+        "join_ordenado_num":"".join(sorted(nums, key=int)),
+    }
+    for name, v in variantes.items():
+        check(f"md5({name} del archivo {tag})", v)
+
+    # --- o md5 de un valor resumen del archivo ---
+    check(f"md5(primer numero de {tag})", nums[0])
+    check(f"md5(ultimo numero de {tag})", nums[-1])
+    check(f"md5(suma de {tag})", str(sum(int(n) for n in nums)))
+
+    # --- o md5 de UN numero suelto (crudo y con \n) ---
+    for n in nums:
+        check(f"md5(numero suelto en {tag})", n)
+        check(f"md5(numero+\\n en {tag})", n + "\n")
+
+    # --- content-addressed: md5 del HTML crudo ---
+    if raw is not None:
+        check(f"md5(html crudo de {tag})", raw)
+
+
+def probar_ordinales():
+    # nombre = md5("1"), md5("report1"), etc.
+    for i in range(0, 8):
+        for pat in (str(i), f"report{i}", f"reporte{i}",
+                    f"code{i}", f"codes{i}", f"report_{i}"):
+            check(f"md5(ordinal '{pat}')", pat)
+
+
+def probar_pares_8digitos():
+    # 16 digitos = dos numeros de 8 concatenados -> md5 del 16-digitos = 3er archivo?
+    ochos = [n for n in (NUMS_A + NUMS_B) if len(n) == 8]
+    for a in ochos:
+        for b in ochos:
+            check("md5(par 8+8)", a + b)
+    # tambien contra los hashes conocidos por si uno de ellos es un 16-dig
+    # (ya cubierto por check); si querias probar el 3ro, genera las URLs:
+    if ochos:
+        print(f"\n  ({len(ochos)} numeros de 8 digitos -> "
+              f"{len(ochos)**2} candidatos de 16 digitos para probar en el server)")
+
+
+if __name__ == "__main__":
+    print("Probando transformaciones contra los hashes conocidos...\n")
+    probar_archivo(NUMS_A, RAW_A, "A")
+    probar_archivo(NUMS_B, RAW_B, "B")
+    probar_ordinales()
+    probar_pares_8digitos()
+
+    print()
+    if _hits:
+        print(f"[OK] Regla(s) encontrada(s): {_hits}")
+        print("     Aplica la MISMA transformacion al 3er conjunto para generar su URL.")
+    else:
+        print("[X] Ningun MATCH. El nombre NO sale de los numeros por md5.")
+        print("    => Deja de combinar numeros. Mira headers (ETag) y el HTML crudo:")
+        print("       curl -sIL  .../codes/<hashA>/   | grep -i etag")
+        print("       curl -sL   .../codes/<hashA>/   | cat -A")
