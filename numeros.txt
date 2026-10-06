@@ -147,3 +147,8 @@ curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwares
 curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0602940f23884f782058efac46f64b0f/" | grep -oP '<li>\K[0-9]+' > repB.txt
 echo "=== 8 digitos en A ==="; awk 'length==8' repA.txt
 echo "=== 8 digitos en B ==="; awk 'length==8' repB.txt
+
+
+
+
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0e1422ea79781ee046484893ce0010c4/" | grep -vP '<li>|bootstrap|cdn-cgi|charset|viewport|<script|<link|doctype|<html|<head|</head|<meta|<body|<ul|</ul|</html|<title'
