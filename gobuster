@@ -1,0 +1,1 @@
+gobuster dir -u "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/" -w /usr/share/wordlists/dirb/common.txt -r -b 404
