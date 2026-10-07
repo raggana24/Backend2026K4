@@ -58,3 +58,14 @@ curl -s "$BASE?id=abc"      # id no numérico
 curl -s "$BASE?id="         # id vacío
 curl -s "$BASE?id[]=1"      # id como array
 curl -s "$BASE?id=1'"       # comilla, por si hay SQL detrás
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+count=0; last=0
+for id in $(seq 0 3000); do
+  body=$(curl -s "$BASE?id=$id")
+  if [ "$body" = "Forbidden" ]; then count=$((count+1)); last=$id; fi
+done
+echo "Forbidden (ventas existentes) entre 0 y 3000: $count"
+echo "ultimo id Forbidden visto: $last"
