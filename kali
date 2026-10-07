@@ -11,3 +11,19 @@ echo "=== sin parametros (400) ==="; curl -s "$BASE/"
 echo; echo "=== con id=1 (403) ==="; curl -s "$BASE/?id=1"
 
 curl -s "https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+for p in id ids venta ventas vendedor empresa competencia competidor cliente usuario user page pagina limit offset desde hasta fecha anio year mes dia formato format tipo categoria sucursal zona region pais q query buscar search nombre codigo numero total cantidad all todos; do
+  body=$(curl -s "$BASE?$p=1")
+  echo "$p=1 -> $body"
+done
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+for v in 0 1 2 3 4 5 6 7 8 9 10 99 100 1000 2019 -1 admin all todos competencia; do
+  body=$(curl -s "$BASE?id=$v")
+  echo "id=$v -> ${body:0:60}"
+done
