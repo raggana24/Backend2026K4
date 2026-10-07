@@ -4,3 +4,10 @@ curl -s -i -H "X-Forwarded-For: 127.0.0.1" "$URL"
 
 URL="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/?id=1"
 curl -s -i -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" "$URL"
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas"
+echo "=== sin parametros (400) ==="; curl -s "$BASE/"
+echo; echo "=== con id=1 (403) ==="; curl -s "$BASE/?id=1"
+
+curl -s "https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
