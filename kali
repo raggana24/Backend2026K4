@@ -69,3 +69,16 @@ for id in $(seq 0 3000); do
 done
 echo "Forbidden (ventas existentes) entre 0 y 3000: $count"
 echo "ultimo id Forbidden visto: $last"
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+extra=0
+for id in $(seq 2593 5000); do
+  body=$(curl -s "$BASE?id=$id")
+  if [ "$body" = "Forbidden" ]; then extra=$((extra+1)); echo "OJO: id=$id es Forbidden"; fi
+done
+echo "Forbidden extra entre 2593 y 5000: $extra"
+
+
+printf '%s' "1641" | md5sum
+
