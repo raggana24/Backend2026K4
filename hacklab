@@ -1,2 +1,4 @@
 
 printf '%s' "tester777@magnificauniversidad.com.ar" | md5sum
+
+echo 'eyJjc3JmIjoiUm9tMmZ0Y0dqUGpiUEh6XzhGclUySmFGcUl0bUVlb3cifQ' | base64 -d
