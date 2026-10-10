@@ -19,3 +19,13 @@ strings ~/pesca.pcap | grep -iE "JOIN|CAST|REEL|DISCONNECT|Jugador83|gochi|SEND_
 
 
 strings ~/pesca.pcap | grep -iE "Sec-WebSocket|Upgrade|GET |HTTP/" | head
+
+
+
+# ver puerto y protocolo en el pcap
+tcpdump -nr ~/pesca.pcap 2>/dev/null | head -5
+
+# o buscá el puerto en los strings del binario
+strings ElEstanqueDePepe-linux* | grep -iE ":[0-9]{4,5}|port|udp|tcp" | grep -iv glfw | head
+
+echo -n 'LBY-ESKDJE:P97:DISCONNECT;' | ncat pesca.shared.softwareseguro.com.ar PUERTO
