@@ -36,3 +36,73 @@ for m in set(re.findall(r'[0-9a-f]{32}', s)):
 
 mkdir -p ~/tmp_pip
 TMPDIR=~/tmp_pip pip install torch transformers safetensors --break-system-packages --no-cache-dir
+
+
+
+
+
+
+
+
+
+
+#!/usr/bin/env python3
+import sys
+import torch
+from safetensors.torch import load_file
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+BASE = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
+MODULOS = ("q_proj", "v_proj")
+SISTEMA = "Eres Neuro, el asistente de NeuroLock. Respondes en español, de forma breve."
+
+
+def cargar(ruta_adaptador: str):
+    tok = AutoTokenizer.from_pretrained(BASE)
+    modelo = AutoModelForCausalLM.from_pretrained(BASE).float()
+
+    t = load_file(ruta_adaptador)
+    gate = t["gate"]
+    gate = torch.ones_like(gate)
+    with torch.no_grad():
+        for i, capa in enumerate(modelo.model.layers):
+            for nombre in MODULOS:
+                A = t[f"capas.{i}.{nombre}.A"]
+                B = t[f"capas.{i}.{nombre}.B"]
+                getattr(capa.self_attn, nombre).weight += (B * gate) @ A
+    return tok, modelo.eval()
+
+
+def responder(tok, modelo, mensajes: list, max_tokens: int = 80) -> str:
+    texto = tok.apply_chat_template(mensajes, tokenize=False, add_generation_prompt=True)
+    entrada = tok(texto, return_tensors="pt", add_special_tokens=False)
+    with torch.no_grad():
+        salida = modelo.generate(**entrada, max_new_tokens=max_tokens, do_sample=False,
+                                 pad_token_id=tok.eos_token_id)
+    nuevos = salida[0, entrada["input_ids"].shape[1]:]
+    return tok.decode(nuevos, skip_special_tokens=True).strip()
+
+
+if __name__ == "__main__":
+    ruta = sys.argv[1] if len(sys.argv) > 1 else "neurolock-adapter.safetensors"
+    print("Cargando a Neuro...")
+    tok, modelo = cargar(ruta)
+    mensajes = [{"role": "system", "content": SISTEMA}]
+    print("Listo. Escribí tu mensaje (Ctrl+D o 'salir' para terminar).\n")
+    while True:
+        try:
+            usuario = input("vos  > ").strip()
+        except EOFError:
+            break
+        if usuario.lower() in ("salir", "exit", "quit"):
+            break
+        if not usuario:
+            continue
+        mensajes.append({"role": "user", "content": usuario})
+        respuesta = responder(tok, modelo, mensajes)
+        mensajes.append({"role": "assistant", "content": respuesta})
+        print(f"neuro> {respuesta}\n")
+
+
+
+
