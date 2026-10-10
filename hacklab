@@ -10,3 +10,6 @@ sudo tcpdump -i any -A -s0 host pesca.shared.softwareseguro.com.ar or host $(dig
 
 
 strings ~/pesca.pcap | grep -iE "SEND_MSG|GET_LOBBY|JOIN|gochi|LOBBY|chat|\{" | head -40
+
+
+sudo tcpdump -i any -A -s0 -w ~/pesca.pcap host pesca.shared.softwareseguro.com.ar
