@@ -13,3 +13,6 @@ strings ~/pesca.pcap | grep -iE "SEND_MSG|GET_LOBBY|JOIN|gochi|LOBBY|chat|\{" | 
 
 
 sudo tcpdump -i any -A -s0 -w ~/pesca.pcap host pesca.shared.softwareseguro.com.ar
+
+
+strings ~/pesca.pcap | grep -iE "JOIN|CAST|REEL|DISCONNECT|Jugador83|gochi|SEND_MSG|:" | grep -iv "glfw\|vulkan\|http/\|host:" | head -40
