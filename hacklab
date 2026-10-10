@@ -10,3 +10,6 @@ gunzip -k /usr/share/wordlists/rockyou.txt.gz
 
 
 ffuf -u "https://chl-d73b6cce-cd37-497d-9a3a-e25236133bb4-analisis-tps.softwareseguro.com.ar/FUZZ" -w /usr/share/wordlists/dirb/common.txt -mc 200,302,403 -t 50
+
+
+echo '.eJwdx7sOgkAQQNFfmUxtCGKjdBbioyJGKyVkWIa4CLu4D4wS_l2kOvcOmFcN2QdbjG8DgptA_cQFXhhY9ZJabcErENoY1hPqf6waEgwdGYKeGlmSAedBeFaOAtgWRjYaPlCy7fzdhyFvLEglhZxnCzbtnNVKBZiN2QKFNRXGeNZtVDmxr9O6SA_ffJ2Ya3Si5HV07Y71G8cfbh49AQ' | base64 -d 2>/dev/null | head -c 500
