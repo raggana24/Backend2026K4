@@ -13,3 +13,7 @@ ffuf -u "$BASE/FUZZ" -w /usr/share/wordlists/dirb/common.txt -fc 404 -t 40
 
 BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
 gobuster dir -u "$BASE" -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -b 404 -t 50
+
+
+BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
+gobuster dir -u "$BASE" -w /usr/share/wordlists/dirb/common.txt -b 404,502 -t 5
