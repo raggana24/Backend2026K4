@@ -40,3 +40,10 @@ import time; time.sleep(1)
 print(s.recv(4096).decode(errors='replace'))
 s.close()
 "
+python3 -c "
+import socket,time
+for pid in ['P97','P25','P36']:
+    s=socket.socket(); s.connect(('pesca.shared.softwareseguro.com.ar',6767))
+    s.sendall(('LBY-ESKDJE:'+pid+':DISCONNECT;').encode()); time.sleep(0.5)
+    print(pid, '->', s.recv(4096).decode(errors='replace')); s.close()
+"
