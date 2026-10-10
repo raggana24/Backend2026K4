@@ -1,28 +1,12 @@
 
 
 
-https://chl-f879f859-d91a-422d-bea5-ebabd8aeb296-estanque-de-pepe.b.softwareseguro.com.ar/
-
-
-
-
-strings ElEstanqueDePepe-linux* | grep -iE "kick|echar|ban|expulsar|comando|cmd|msg|chat|ws://|wss://|http|gochi|admin|lobby" | head -50
-
-
-strings ElEstanqueDePepe-linux* | grep -iE "://|:[0-9]{2,5}|softwareseguro" | head -30
-
-
-chmod +x ElEstanqueDePepe-linux*
-strings ElEstanqueDePepe-linux* | grep -iE "kick|echar|ban|gochi|ws://|wss://|http|comando|admin|lobby|chat" | head -50
-
-
-
 cd ~/Downloads
-# todos los strings en MAYÚSCULAS tipo comando (como LOBBY, SEND_MSG, GET_LOBBY)
-strings ElEstanqueDePepe-linux* | grep -E "^[A-Z_]{3,}$" | sort -u
+strings ElEstanqueDePepe-linux* | grep -iE "GET /|Sec-WebSocket|Upgrade:|Host:|HTTP/1|wss?://|:8|:9|:3[0-9]{3}|/game|/ws|/lobby|/socket" | sort -u | head -40
 
-# funciones del binario (símbolos)
-nm ElEstanqueDePepe-linux* 2>/dev/null | grep -iE " t | T " | grep -iE "kick|expul|ban|remove|lobby|chat|send|flag|gochi"
+strings ElEstanqueDePepe-linux* | grep -E "SEND_MSG|GET_LOBBY|JOIN|%s|\{|\":|name|player|user|id" | grep -iv "glfw\|vulkan\|x11\|xcb\|egl" | head -40
 
-# cómo se conecta (ws/tcp/puerto) — buscar cerca del dominio
-strings ElEstanqueDePepe-linux* | grep -iE "pesca|wss|ws:|8080|:[0-9]{3,5}|/ws|socket|connect" | head -30
+sudo tcpdump -i any -A -s0 host pesca.shared.softwareseguro.com.ar or host $(dig +short pesca.shared.softwareseguro.com.ar | head -1) -w ~/pesca.pcap &
+
+
+strings ~/pesca.pcap | grep -iE "SEND_MSG|GET_LOBBY|JOIN|gochi|LOBBY|chat|\{" | head -40
