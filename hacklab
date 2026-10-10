@@ -17,3 +17,6 @@ echo '.eJwdx7sOgkAQQNFfmUxtCGKjdBbioyJGKyVkWIa4CLu4D4wS_l2kOvcOmFcN2QdbjG8DgptA_
 
 C='.eJwdx7sOgkAQQNFfmUxtCGKjdBbioyJGKyVkWIa4CLu4D4wS_l2kOvcOmFcN2QdbjG8DgptA_cQFXhhY9ZJabcErENoY1hPqf6waEgwdGYKeGlmSAedBeFaOAtgWRjYaPlCy7fzdhyFvLEglhZxnCzbtnNVKBZiN2QKFNRXGeNZtVDmxr9O6SA_ffJ2Ya3Si5HV07Y71G8cfbh49AQ'
 flask-unsign --decode --cookie "$C"
+
+
+https://chl-57372c23-e39e-4177-8a38-a0ad96fe025b-repo-filtrado.b.softwareseguro.com.ar/
