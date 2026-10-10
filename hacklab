@@ -25,3 +25,14 @@ https://chl-57372c23-e39e-4177-8a38-a0ad96fe025b-repo-filtrado.b.softwareseguro.
 https://tol-c3fc37d8-3057-40ec-849d-9d4b0e965268-juez-desafios.tools.softwareseguro.com.ar/
 
 https://chl-3df7b3e3-ca91-40fe-8500-f809ae0a1a8c-secreto-en-el-llm.softwareseguro.com.ar/
+
+
+
+python3 -c "
+import json, struct
+with open('neurolock-adapter.safetensors','rb') as f:
+    n = struct.unpack('<Q', f.read(8))[0]
+    header = json.loads(f.read(n))
+print('TENSORES:', list(header.keys()))
+print('META:', json.dumps(header.get('__metadata__', {}), indent=2))
+"
