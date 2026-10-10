@@ -33,3 +33,6 @@ for m in set(re.findall(r'[0-9a-f]{32}', s)):
     print('HASH:', m)
 "
 
+
+mkdir -p ~/tmp_pip
+TMPDIR=~/tmp_pip pip install torch transformers safetensors --break-system-packages --no-cache-dir
