@@ -36,3 +36,14 @@ with open('neurolock-adapter.safetensors','rb') as f:
 print('TENSORES:', list(header.keys()))
 print('META:', json.dumps(header.get('__metadata__', {}), indent=2))
 "
+
+
+cd ~/Downloads
+python3 -c "
+from safetensors.torch import load_file
+t = load_file('neurolock-adapter.safetensors')
+g = t['gate']
+print('gate shape:', g.shape)
+print('gate:', g)
+print('suma:', g.sum().item(), 'min:', g.min().item(), 'max:', g.max().item())
+"
