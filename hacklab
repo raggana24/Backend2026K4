@@ -29,3 +29,14 @@ tcpdump -nr ~/pesca.pcap 2>/dev/null | head -5
 strings ElEstanqueDePepe-linux* | grep -iE ":[0-9]{4,5}|port|udp|tcp" | grep -iv glfw | head
 
 echo -n 'LBY-ESKDJE:P97:DISCONNECT;' | ncat pesca.shared.softwareseguro.com.ar PUERTO
+
+
+python3 -c "
+import socket
+s = socket.socket()
+s.connect(('pesca.shared.softwareseguro.com.ar', 6767))
+s.sendall(b'LBY-ESKDJE:P97:DISCONNECT;')
+import time; time.sleep(1)
+print(s.recv(4096).decode(errors='replace'))
+s.close()
+"
