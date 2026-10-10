@@ -2,3 +2,34 @@
 
 
 python3 -m pip install torch transformers safetensors --break-system-packages
+
+
+
+cd ~/Downloads
+python3 -c "
+from safetensors.numpy import load_file
+import numpy as np, re
+t = load_file('neurolock-adapter.safetensors')
+for k,v in t.items():
+    b = v.tobytes()
+    s = ''.join(chr(c) if 32<=c<127 else '.' for c in b)
+    for m in re.findall(r'[0-9a-fA-F]{32}', s):
+        print(k, '-> HASH:', m)
+    for m in re.findall(r'[ -~]{6,}', s):
+        if any(x in m.lower() for x in ['secret','flag','ctf','neuro','clave']):
+            print(k, '-> STR:', m[:80])
+"
+
+
+
+python3 -c "
+import json, struct, re
+with open('neurolock-adapter.safetensors','rb') as f:
+    n = struct.unpack('<Q', f.read(8))[0]
+    f.read(n)  # saltear header
+    data = f.read()  # todos los pesos crudos
+s = ''.join(chr(c) if 32<=c<127 else '.' for c in data)
+for m in set(re.findall(r'[0-9a-f]{32}', s)):
+    print('HASH:', m)
+"
+
