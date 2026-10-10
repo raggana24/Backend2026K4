@@ -47,3 +47,7 @@ print('gate shape:', g.shape)
 print('gate:', g)
 print('suma:', g.sum().item(), 'min:', g.min().item(), 'max:', g.max().item())
 "
+
+pip install torch transformers safetensors --break-system-packages
+
+
