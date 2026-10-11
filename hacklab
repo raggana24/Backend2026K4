@@ -1,17 +1,75 @@
-UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127 Safari/537.36"
-B="https://chl-bd311447-f1ca-4dfa-b6fa-d239af919a50-veltra-bank.softwareseguro.com.ar"
-curl -s -A "$UA" "$B/login" -o ~/veltra_login.html
-echo "=== tamaño ==="; wc -c ~/veltra_login.html
-echo "=== scripts que carga ==="; grep -oE '<script[^>]*>' ~/veltra_login.html
-echo "=== hay algo inline (onload/onerror/on...)? ==="; grep -oiE 'on[a-z]+=' ~/veltra_login.html | sort -u
-echo "=== HTML completo ==="; cat ~/veltra_login.html
 
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorio 2FA</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    .verify-card { margin: 60px auto; }
+    .verify-card input {
+      text-align: center;
+      letter-spacing: .5em;
+      font-size: 22px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🛡</span>
+      <span>Veltra<b>Lab</b></span>
+    </div>
+    <div class="pill">Laboratorio local · 2FA</div>
+  </header>
 
+  <main class="wrap" style="display:block">
+    <section class="card verify-card">
+      <div class="eyebrow">Paso 2 de 2</div>
+      <h2>Código de verificación</h2>
+      <p class="sub">
+        Ingresá el código de prueba de seis dígitos.
+      </p>
 
-# 1. cambiar los nombres de campo para que matcheen el Veltra real
-sed -i 's/name="usuario"/name="txtLogin"/; s/name="clave"/name="txtPassword"/' ~/phish/index.html
-echo "=== nombres ahora ==="; grep -oE 'name="[^"]*"' ~/phish/index.html
+      <form id="verify-form">
+        <div class="field">
+          <label for="otp">Código de prueba</label>
+          <input id="otp" name="otp"
+                 type="text" inputmode="numeric"
+                 pattern="[0-9]{6}" maxlength="6"
+                 placeholder="000000" required>
+        </div>
+        <button class="btn" type="submit">
+          Verificar código
+        </button>
+      </form>
 
-# 2. reiniciar el servidor de captura (lee el HTML al arrancar)
-pkill -f serve.py; sleep 1; cd ~/phish && python3 serve.py
+      <p id="result" role="status" style="margin-top:18px"></p>
+    </section>
+  </main>
 
+  <script>
+    document.getElementById("verify-form")
+      .addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const result = document.getElementById("result");
+        const otp = document.getElementById("otp").value;
+
+        try {
+          const response = await fetch("/api/verify-demo", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({otp})
+          });
+
+          const data = await response.json();
+          result.textContent = data.message;
+        } catch {
+          result.textContent = "No se pudo conectar con el laboratorio.";
+        }
+      });
+  </script>
+</body>
+</html>
