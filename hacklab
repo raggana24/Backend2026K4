@@ -16,3 +16,6 @@ BASE='https://chl-3038e4c5-2fbd-42ac-8d5b-17478b722fac-cuentas-claras.b.software
 printf 'reporte\nreportes\nreporte-movimientos\nmovimientos-categoria\nmovimientos_por_categoria\ncategorias\ncategoria\nmovimientos\nresumen\ntotales\nestadisticas\nstats\ncontaduria\ninterno\nadmin\ndashboard\npanel\nexport\nexportar\ndescargar\nbackup\ndump\ndb\ndatos\napi\napi/movimientos\napi/categorias\napi/reportes\nmovimientos/all\nmovimientos/total\nmovimientos/resumen\nreporte/categorias\ncontar\nconteo' > ~/rutas.txt
 ffuf -u "$BASE/FUZZ" -w ~/rutas.txt -mc all -fc 404 -X GET -t 10
 ffuf -u "$BASE/FUZZ" -w ~/rutas.txt -mc all -fc 404 -X POST -t 10
+
+
+https://webhook.site/1c917c46-e35f-4d09-9c32-c19e2f5f7e5e
