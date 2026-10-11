@@ -10,3 +10,9 @@ for id in $(seq 1 60); do
   msg=$(echo "$body" | grep -oiE 'flash[^>]*>[^<]+' | sed -E 's/<[^>]+>//g')
   echo "id=$id -> $msg"
 done
+
+
+BASE='https://chl-3038e4c5-2fbd-42ac-8d5b-17478b722fac-cuentas-claras.b.softwareseguro.com.ar'
+printf 'reporte\nreportes\nreporte-movimientos\nmovimientos-categoria\nmovimientos_por_categoria\ncategorias\ncategoria\nmovimientos\nresumen\ntotales\nestadisticas\nstats\ncontaduria\ninterno\nadmin\ndashboard\npanel\nexport\nexportar\ndescargar\nbackup\ndump\ndb\ndatos\napi\napi/movimientos\napi/categorias\napi/reportes\nmovimientos/all\nmovimientos/total\nmovimientos/resumen\nreporte/categorias\ncontar\nconteo' > ~/rutas.txt
+ffuf -u "$BASE/FUZZ" -w ~/rutas.txt -mc all -fc 404 -X GET -t 10
+ffuf -u "$BASE/FUZZ" -w ~/rutas.txt -mc all -fc 404 -X POST -t 10
