@@ -29,3 +29,8 @@ for cat in "IVA" "AFIP" "ABL" "Impuesto al Cheque"; do
     echo "[$cat $extra] -> $r"
   done
 done
+
+
+COOKIE='session=PEGÁ_TU_SESSION'
+BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
+curl -s -b "$COOKIE" "$BASE/" | grep -oiE 'idcol">[0-9]+</td>[^#]*?cat">[^<]+' | sed -E 's/<[^>]+>/ /g' | grep -viE "Capacitacion|Catering|Consultoria|Insumos|Limpieza|Logistica|Mantenimiento|Marketing|Mobiliario|Papeleria|Seguridad|Servicios|Software|Tecnologia|Telefonia|Transporte|Viaticos"
