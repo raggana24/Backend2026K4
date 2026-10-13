@@ -1,0 +1,7 @@
+ip a                        # mirá cuál es tu subred (ej: 192.168.56.x)
+nmap -sn 192.168.56.0/24    # buscá la IP de Vulpasar
+nmap -sV -p- <ip-victima>   # mirá qué puertos/servicios tiene
+ssh ch10xo@<ip-victima>     # si hay SSH, entrás (clave: vulpasar)
+
+
+wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh

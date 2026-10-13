@@ -1,0 +1,167 @@
+31294929
+748677833
+841513465
+225918032
+668762415
+34034465
+428136580
+335524587
+188827999
+291413104
+727905582
+109577461
+848690704
+659126247
+428942446
+492611146
+140930026
+746347450
+449329243
+16946895
+520328147
+144111342
+406479892
+656724304
+111886474
+398106419
+836679236
+97678570
+562865523
+59779019
+966856957
+79771886
+992427997
+726677481
+241981073
+93820862
+5783534
+863101109
+908709177
+750663089
+983971336
+8421657
+246397619
+797092279
+409012839
+862324511
+796294324
+250017202
+810674213
+855910825
+
+
+https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/
+
+
+
+#!/bin/bash
+BASE="http://EL_SITIO/la_carpeta"   # <-- completá con la URL real
+
+while read n; do
+  h=$(printf "%s" "$n" | md5sum | cut -d' ' -f1)
+  code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/$h.html")
+  echo "$n -> $h -> $code"
+done < numeros.txt
+
+
+
+
+while read n; do
+  printf "%s" "$n" | md5sum | grep -q "0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f" && echo "SIN newline: $n"
+  echo "$n" | md5sum | grep -q "0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f" && echo "CON newline: $n"
+done < numeros.txt
+
+
+
+
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0602940f23884f782058efac46f64b0f/" -o archivo1.html
+cat archivo1.html
+
+
+T="0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f"
+while read n; do
+  for v in "$n" "0$n" "00$n" "000$n" "$(printf '%09d' $n)" "$(printf '%010d' $n)" "$(printf '%016d' $n)"; do
+    printf "%s" "$v" | md5sum | grep -q "$T" && echo "SIN-nl variante='$v' (de $n)"
+    echo "$v" | md5sum | grep -q "$T" && echo "CON-nl variante='$v' (de $n)"
+  done
+done < numeros.txt
+
+
+
+
+
+T="01dfa5c0d2375d6bdf7f8cec5e83791a\|3e76e3be0d158f056fa236dfb28aa727"
+while read n; do
+  printf "%s" "$n" | md5sum | grep -q "$T" && echo "SIN-nl: $n"
+  echo "$n" | md5sum | grep -q "$T" && echo "CON-nl: $n"
+done < numeros.txt
+
+
+
+printf "%s" "0e1422ea79781ee046484893ce0010c4" | md5sum
+printf "%s" "0602940f23884f782058efac46f64b0f" | md5sum
+echo "0e1422ea79781ee046484893ce0010c4" | md5sum
+echo "0602940f23884f782058efac46f64b0f" | md5sum
+
+
+
+printf "%s" "01dfa5c0d2375d6bdf7f8cec5e83791a" | md5sum
+echo "01dfa5c0d2375d6bdf7f8cec5e83791a" | md5sum
+
+
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/" | head -50
+
+
+
+T="0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f"
+while read n; do
+  for v in "$n" " $n" "$n " "numero$n" "reporte$n" "report$n" "$n$n" "Mis reportes$n"; do
+    printf "%s" "$v" | md5sum | grep -qi "$T" && echo "MATCH sin-nl: [$v]"
+    echo "$v" | md5sum | grep -qi "$T" && echo "MATCH con-nl: [$v]"
+  done
+  # mayusculas del hash del numero
+  printf "%s" "$n" | md5sum | cut -d' ' -f1 | tr 'a-z' 'A-Z' | md5sum | grep -qi "$T" && echo "MATCH md5-upper: $n"
+done < numeros.txt
+echo "=== fin busqueda individual ==="</parameter>
+
+
+
+while read n; do
+  h=$(printf "%s" "$n" | md5sum | cut -d' ' -f1)
+  code=$(curl -s -L -o /dev/null -w "%{http_code}" "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/$h/")
+  echo "$n -> $code"
+done < numeros.txt | grep " 200"
+
+
+
+BASE="https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes"
+while read a; do
+  while read b; do
+    cand="..."                          # <- concatenar a y b
+    h=$(printf "%s" "$cand" | md5sum | cut -d' ' -f1)
+    code=$(curl -s -L -o /dev/null -w "%{http_code}" "...")   # <- armar la URL
+    echo "$cand -> $code"
+  done < ocho.txt
+done < ocho.txt | grep " 200"
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0e1422ea79781ee046484893ce0010c4/" | grep -oP '<li>\K[0-9]+' > repA.txt
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0602940f23884f782058efac46f64b0f/" | grep -oP '<li>\K[0-9]+' > repB.txt
+echo "=== 8 digitos en A ==="; awk 'length==8' repA.txt
+echo "=== 8 digitos en B ==="; awk 'length==8' repB.txt
+
+
+
+
+curl -s -L "https://chl-5a88a160-d2f2-43ca-bf38-b6289845ac18-apagar-ia.softwareseguro.com.ar/codes/0e1422ea79781ee046484893ce0010c4/" | grep -vP '<li>|bootstrap|cdn-cgi|charset|viewport|<script|<link|doctype|<html|<head|</head|<meta|<body|<ul|</ul|</html|<title'
+
+
+#!/bin/bash
+T="0e1422ea79781ee046484893ce0010c4\|0602940f23884f782058efac46f64b0f"
+while read a; do
+  while read b; do
+    for cand in "$a$b" "$b$a"; do
+      printf "%s" "$cand" | md5sum | grep -qi "$T" && echo "MATCH printf: $cand"
+      echo "$cand" | md5sum | grep -qi "$T" && echo "MATCH echo: $cand"
+    done
+  done < numeros.txt
+done < numeros.txt
+echo "=== fin ==="
